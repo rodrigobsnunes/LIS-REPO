@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal LIS</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f0f0;
+            text-align: center;
+            padding: 60px;
+        }
+        h1 {
+            color: #333;
+        }
+        .nav-links {
+            margin-top: 40px;
+        }
+        .nav-links a {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+        .nav-links a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bem vindo ao Portal LIS</h1>
+    <p>Escolha uma funcionalidade:</p>
+
+    <div class="nav-links">
+        {% for link in app_links %}
+            <a href="{{ link.url }}">{{ link.name }}</a>
+        {% endfor %}
+    </div>
+</body>
+</html>
