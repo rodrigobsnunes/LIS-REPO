@@ -1,0 +1,35 @@
+<form method="post">
+    {% csrf_token %}
+    <table>
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="select-all"></th>
+                <th># OS LIS</th>
+                <th>Solicitante</th>
+                <th>Serviço</th>
+                <th>Data solicitação</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ordem in ordens_servico %}
+                <tr>
+                    <td><input type="checkbox" name="selected_items" value="{{ item.id }}"></td>
+                    <td>{{ ordem.nr_os_lis }}</td>
+                    <td>{{ ordem.solicitante }}</td>
+                    <td>{{ ordem.get_servico_display }}</td>
+                    <td>{{ ordem.ts_solicitacao }}</td>
+                    <td>{{ ordem.get_status_display }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    document.getElementById('select-all').addEventListener('click', function() {
+        let checkboxes = document.querySelectorAll('input[name="selected_items"]');
+        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+    });
+</script>
