@@ -1,5 +1,18 @@
-<form method="post">
+
+{% extends 'base.html' %}
+
+{% block title %}
+Ordens de Serviço
+{% endblock %}
+
+{% block content %}
+<form method="post" onsubmit="return handleFormSubmit(this);">
     {% csrf_token %}
+    <button type="submit" class="button" name="action" value="assumir" id="assumir">Assumir</button>
+    <button type="submit" class="button" name="action" value="encerrar" id="encerrar">Encerrar</button>
+    <button type="button" class="button" name="action" value="buscar" id="buscar">Buscar novas OS</button>
+    <!-- Hidden input to hold the name entered via prompt -->
+   <input type="hidden" name="responsavel" id="responsavel">
     <table>
         <thead>
             <tr>
@@ -9,22 +22,28 @@
                 <th>Serviço</th>
                 <th>Data solicitação</th>
                 <th>Status</th>
+                <th>Responsável</th>
+                <th>Data inicio</th>
+                <th>Data conclusão</th>
             </tr>
         </thead>
         <tbody>
             {% for ordem in ordens_servico %}
                 <tr>
-                    <td><input type="checkbox" name="selected_items" value="{{ item.id }}"></td>
+                    <td><input type="checkbox" name="selected_items" value="{{ ordem.nr_os_lis }}"></td>
                     <td>{{ ordem.nr_os_lis }}</td>
                     <td>{{ ordem.solicitante }}</td>
                     <td>{{ ordem.get_servico_display }}</td>
                     <td>{{ ordem.ts_solicitacao }}</td>
                     <td>{{ ordem.get_status_display }}</td>
+                    <td>{% if ordem.responsavel %}{{ ordem.responsavel }}{% else %}&mdash;{% endif %}</td>
+                    <td>{% if ordem.ts_inicio %}{{ ordem.ts_inicio }}{% else %}&mdash;{% endif %}</td>
+                    <td>{% if ordem.ts_conclusao %}{{ ordem.ts_conclusao }}{% else %}&mdash;{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <button type="submit">Submit</button>
+    
 </form>
 
 <script>
@@ -33,3 +52,65 @@
         checkboxes.forEach(checkbox => checkbox.checked = this.checked);
     });
 </script>
+
+<script>
+function handleFormSubmit(event) {
+  const clickedButton = document.activeElement;
+
+  if (clickedButton && clickedButton.id === "assumir") {
+    const name = prompt("Nome do responsável:");
+
+    if (!name || name.trim() === "") {
+      alert("Nome do responsável é necessário.");
+      return false; // Cancel submission
+    }
+
+    document.getElementById("responsavel").value = name.trim();
+  }
+
+  // Continue submission for other buttons
+  return true;
+}
+</script>
+
+<script>
+
+
+document.getElementById("buscar").addEventListener("click", function () {
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+  const csrftoken = getCookie('csrftoken');
+
+  fetch("{% url 'ordens_servico:atualizar_os' %}", {
+    method: "POST",
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': csrftoken
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data)
+  })
+  .catch(error => {
+    console.error("Error:", error);
+  });
+});
+</script>
+
+{% endblock %}
