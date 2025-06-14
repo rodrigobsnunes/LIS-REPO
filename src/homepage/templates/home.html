@@ -1,10 +1,16 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}
 Portal LIS
 {% endblock %}
 
 {% block content %}
-<h1>Bem vindo ao Portal LIS</h1>
-    <p>Escolha uma funcionalidade no menu ao lado.</p>
+
+<div class="center-row">
+        <img src= "{% static 'homepage/multimeter2.png' %}" alt="Multímetro">
+        <h1>Portal LIS</h1>
+</div>
+<p>Escolha uma funcionalidade no menu ao lado.</p>
 {% endblock %}
